@@ -197,7 +197,7 @@ class MyApp extends StatelessWidget {
                             ),
 
                             SizedBox(width: 5),
-
+ 
                             Icon(
                               Icons.favorite,
                               color: Colors.pink,
