@@ -4,6 +4,45 @@ void main() {
   runApp(const MyApp());
 }
 
+// Profile Data
+
+// PROFILE 1
+String ProfileImage1 = "assets/cutie.jpg";
+String? name1 = "Julia Yashika Kong";
+String? courseSection1 = "BSIT 3";
+int age1 = 20;
+String? hobby1 = null;
+
+// PROFILE 2
+String ProfileImage2 = "assets/meow.png";
+String? name2 = "Emji Silento";
+String? courseSection2 = null;
+int age2 = 22;
+String? hobby2 = "Drinking Alcohol";
+
+// PROFILE 3
+String ProfileImage3 = "assets/ha.jpg";
+String? name3 = null;
+String? courseSection3 = "BSIT 3";
+int age3 = 21;
+String? hobby3 = "Dancing";
+
+// PROFILE 4
+String ProfileImage4 = "assets/pretty.png";
+String? name4 = "Karylle Racaza";
+String? courseSection4 = "BSIT 3";
+int age4 = 21;
+String? hobby4 = "Dancing";
+
+// PROFILE 5
+String ProfileImage5 = "assets/sexy.jpg";
+String? name5 = "Mav Sumalangit";
+String? courseSection5 = "BSIT 3";
+int age5 = 21;
+String? hobby5 = "Singing & Dancing";
+
+String appTitle = "My Profile";
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -11,245 +50,461 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        backgroundColor: Colors.pink.shade50,
+      home: const ProfilePage(),
+    );
+  }
+}
 
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          title: const Text(
-            'My First Flutter Application',
-            style: TextStyle(
-              color: Colors.pink,
-              fontSize: 16,
-            ),
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFFFF7FF),
+
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFFFF7FF),
+        elevation: 0,
+        centerTitle: true,
+
+        title: const Text(
+          'My First Flutter Application',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 14,
+            fontWeight: FontWeight.normal,
           ),
         ),
+      ),
 
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Column(
-              children: [
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            children: [
 
-                // CARD 1 - PROFILE
-                Card(
-                  color: const Color.fromARGB(255, 241, 140, 174)
-                      .withOpacity(0.35),
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 30, 16, 12),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
 
-                        // Circular Profile Picture
-                        Container(
-                          width: 120,
-                          height: 120,
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
-                            border: Border.all(
-                              color: Colors.pink,
-                              width: 4,
-                            ),
-                          ),
-                          child: ClipOval(
-                            child: Image.asset(
-                              'assets/meow.png',
-                              width: 110,
-                              height: 110,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
+              Container(
+                width: 220,
+                margin: const EdgeInsets.only(bottom: 20),
+                padding: const EdgeInsets.all(14),
 
-                        const SizedBox(height: 25),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8F5FA),
+                  borderRadius: BorderRadius.circular(8),
 
-                        // Name
-                        const Text(
-                          'Julia Yashika A. Kong',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.pink,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-
-                        const SizedBox(height: 5),
-
-                        // Course
-                        const Text(
-                          'BSIT 3',
-                          style: TextStyle(
-                            color: Colors.pink,
-                            fontSize: 14,
-                          ),
-                        ),
-
-                        const SizedBox(height: 20),
-
-                        // Application
-                        const Text(
-                          'My First Flutter Application',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.pink,
-                            fontSize: 16,
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
-
-                        const SizedBox(height: 20),
-
-                        // Date
-                        const Text(
-                          'August 11, 2026',
-                          style: TextStyle(
-                            color: Colors.pink,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-
-                        const SizedBox(height: 20),
-
-                        // Hobby
-                        const Text(
-                          'Hobby: Eating',
-                          style: TextStyle(
-                            color: Colors.pink,
-                            fontSize: 16,
-                          ),
-                        ),
-
-                        const SizedBox(height: 2),
-
-                        // Age and Birthday
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Text(
-                              'Age: 20',
-                              style: TextStyle(
-                                color: Colors.pink,
-                                fontSize: 12,
-                              ),
-                            ),
-
-                            SizedBox(width: 25),
-
-                            Text(
-                              'Birthday: March 13, 2006',
-                              style: TextStyle(
-                                color: Colors.pink,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 5,
+                      offset: Offset(0, 3),
                     ),
-                  ),
+                  ],
                 ),
 
-                const SizedBox(height: 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
 
-                // CARD 2 - FAVORITES
-                Card(
-                  color: const Color.fromARGB(255, 241, 140, 174)
-                      .withOpacity(0.35),
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                    child: Column(
-                      children: [
+                  children: [
 
-                        // My Favorites title
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-
-                            SizedBox(width: 5),
-                            
-                            Icon(
-                              Icons.favorite,
-                              color: Colors.pink,
-                              size: 20,
-                            ),
-
-                            Text(
-                              'My Favorites',
-                              style: TextStyle(
-                                color: Colors.pink,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-
-                            SizedBox(width: 5),
- 
-                            Icon(
-                              Icons.favorite,
-                              color: Colors.pink,
-                              size: 20,
-                            ),
-
-                          ],
+                    // Profile Title
+                    Center(
+                      child: Text(
+                        appTitle,
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
                         ),
-
-                        const SizedBox(height: 18),
-
-                        // Favorites
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Text(
-                              'Game: Mobile Legends',
-                              style: TextStyle(
-                                color: Colors.pink,
-                                fontSize: 11,
-                              ),
-                            ),
-
-                            SizedBox(width: 20),
-
-                            Text(
-                              'Movie: Avatar: Fire and Ash',
-                              style: TextStyle(
-                                color: Colors.pink,
-                                fontSize: 11,
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 12),
-
-                        const Text(
-                          'Color: Pink',
-                          style: TextStyle(
-                            color: Colors.pink,
-                            fontSize: 11,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
+
+                    const SizedBox(height: 12),
+
+                    // Profile Image
+                    Center(
+                      child: Image.asset(
+                        ProfileImage1,
+                        width: 80,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // Name
+                    Text(
+                      "Name: ${name1 ?? "Not provided"}",
+                      style: const TextStyle(fontSize: 12),
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    // Course
+                    Text(
+                      "Course & Section: ${courseSection1 ?? "Unknown"}",
+                      style: const TextStyle(fontSize: 12),
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    // Age
+                    Text(
+                      "Age: $age1",
+                      style: const TextStyle(fontSize: 12),
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    // Hobby
+                    Text(
+                      "Hobby: ${hobby1 ?? "Not provided"}",
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+
+              Container(
+                width: 220,
+                margin: const EdgeInsets.only(bottom: 20),
+                padding: const EdgeInsets.all(14),
+
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8F5FA),
+                  borderRadius: BorderRadius.circular(8),
+
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 5,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
                 ),
 
-                const SizedBox(height: 20),
-              ],
-            ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+
+                  children: [
+
+                    // Profile Title
+                    Center(
+                      child: Text(
+                        appTitle,
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // Profile Image
+                    Center(
+                      child: Image.asset(
+                        ProfileImage2,
+                        width: 80,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // Name
+                    Text(
+                      "Name: ${name2 ?? "Not provided"}",
+                      style: const TextStyle(fontSize: 12),
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    // Course
+                    Text(
+                      "Course & Section: ${courseSection2 ?? "Unknown"}",
+                      style: const TextStyle(fontSize: 12),
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    // Age
+                    Text(
+                      "Age: $age2",
+                      style: const TextStyle(fontSize: 12),
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    // Hobby
+                    Text(
+                      "Hobby: ${hobby2 ?? "Not provided"}",
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+
+              // ================= PROFILE 3 =================
+
+              Container(
+                width: 220,
+                margin: const EdgeInsets.only(bottom: 20),
+                padding: const EdgeInsets.all(14),
+
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8F5FA),
+                  borderRadius: BorderRadius.circular(8),
+
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 5,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+
+                  children: [
+
+                    // Profile Title
+                    Center(
+                      child: Text(
+                        appTitle,
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // Profile Image
+                    Center(
+                      child: Image.asset(
+                        ProfileImage3,
+                        width: 80,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // Name
+                    Text(
+                      "Name: ${name3 ?? "Not provided"}",
+                      style: const TextStyle(fontSize: 12),
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    // Course
+                    Text(
+                      "Course & Section: ${courseSection3 ?? "Unknown"}",
+                      style: const TextStyle(fontSize: 12),
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    // Age
+                    Text(
+                      "Age: $age3",
+                      style: const TextStyle(fontSize: 12),
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    // Hobby
+                    Text(
+                      "Hobby: ${hobby3 ?? "Not provided"}",
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+
+              // ================= PROFILE 4 =================
+
+              Container(
+                width: 220,
+                margin: const EdgeInsets.only(bottom: 20),
+                padding: const EdgeInsets.all(14),
+
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8F5FA),
+                  borderRadius: BorderRadius.circular(8),
+
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 5,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+
+                  children: [
+
+                    // Profile Title
+                    Center(
+                      child: Text(
+                        appTitle,
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // Profile Image
+                    Center(
+                      child: Image.asset(
+                        ProfileImage4,
+                        width: 80,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // Name
+                    Text(
+                      "Name: ${name4 ?? "Not provided"}",
+                      style: const TextStyle(fontSize: 12),
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    // Course
+                    Text(
+                      "Course & Section: ${courseSection4 ?? "Unknown"}",
+                      style: const TextStyle(fontSize: 12),
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    // Age
+                    Text(
+                      "Age: $age4",
+                      style: const TextStyle(fontSize: 12),
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    // Hobby
+                    Text(
+                      "Hobby: ${hobby4 ?? "Not provided"}",
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+
+              // ================= PROFILE 5 =================
+
+              Container(
+                width: 220,
+                margin: const EdgeInsets.only(bottom: 20),
+                padding: const EdgeInsets.all(14),
+
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8F5FA),
+                  borderRadius: BorderRadius.circular(8),
+
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 5,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+
+                  children: [
+
+                    // Profile Title
+                    Center(
+                      child: Text(
+                        appTitle,
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // Profile Image
+                    Center(
+                      child: Image.asset(
+                        ProfileImage5,
+                        width: 80,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // Name
+                    Text(
+                      "Name: ${name5 ?? "Not provided"}",
+                      style: const TextStyle(fontSize: 12),
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    // Course
+                    Text(
+                      "Course & Section: ${courseSection5 ?? "Unknown"}",
+                      style: const TextStyle(fontSize: 12),
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    // Age
+                    Text(
+                      "Age: $age5",
+                      style: const TextStyle(fontSize: 12),
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    // Hobby
+                    Text(
+                      "Hobby: ${hobby5 ?? "Not provided"}",
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
