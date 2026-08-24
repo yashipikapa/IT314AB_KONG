@@ -4,7 +4,6 @@ void main() {
   runApp(const MyApp());
 }
 
-<<<<<<< HEAD
 // Profile Data
 
 // PROFILE 1
@@ -43,16 +42,6 @@ int age5 = 21;
 String? hobby5 = "Singing & Dancing";
 
 String appTitle = "My Profile";
-=======
-// Flag 1 - Identified Data and Data Types
-
-String name = 'Julia Yashika A. Kong';
-String courseSection = 'BSIT 3';
-int age = 20;
-String hobby = 'Singing';
-double height = 159.5;
-bool isStudent = true;
->>>>>>> 5864ea4 (feat:added file Capture the Flag 3)
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -92,37 +81,15 @@ class _ProfilePageState extends State<ProfilePage> {
             fontWeight: FontWeight.normal,
           ),
         ),
-<<<<<<< HEAD
       ),
 
       body: SingleChildScrollView(
         child: Center(
           child: Column(
             children: [
-=======
-        body: SingleChildScrollView(
-          child: Center(
-            child: Card(
-              margin: const EdgeInsets.all(25),
-              elevation: 8,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(30),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.flutter_dash,
-                      size: 70,
-                      color: Colors.pink,
-                    ),
->>>>>>> 5864ea4 (feat:added file Capture the Flag 3)
 
                     const SizedBox(height: 20),
 
-<<<<<<< HEAD
               Container(
                 width: 220,
                 margin: const EdgeInsets.only(bottom: 20),
@@ -147,7 +114,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
                   children: [
 
-                    // Profile Title
                     Center(
                       child: Text(
                         appTitle,
@@ -160,7 +126,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
                     const SizedBox(height: 12),
 
-                    // Profile Image
                     Center(
                       child: Image.asset(
                         ProfileImage1,
@@ -201,99 +166,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       "Hobby: ${hobby1 ?? "Not provided"}",
                       style: const TextStyle(fontSize: 12),
                     ),
-=======
-                    Container(
-                      width: 160,
-                      height: 160,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.pink,
-                          width: 5,
-                        ),
-                      ),
-                      child: ClipOval(
-                        child: Image.asset(
-                          'assets/meow.png',
-                          width: 150,
-                          height: 150,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    const Text(
-                      'Flag 1: Identify the Data',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.pink,
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    Text(
-                      'Name: $name',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        color: Colors.pink,
-                      ),
-                    ),
-
-                    const SizedBox(height: 8),
-
-                    Text(
-                      'Course & Section: $courseSection',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        color: Colors.pink,
-                      ),
-                    ),
-
-                    const SizedBox(height: 8),
-
-                    Text(
-                      'Age: $age',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        color: Colors.pink,
-                      ),
-                    ),
-
-                    const SizedBox(height: 8),
-
-                    Text(
-                      'Hobby: $hobby',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        color: Colors.pink,
-                      ),
-                    ),
-
-                    const SizedBox(height: 8),
-
-                    Text(
-                      'Height: $height cm',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        color: Colors.pink,
-                      ),
-                    ),
-
-                    const SizedBox(height: 8),
-
-                    Text(
-                      'Student: $isStudent',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        color: Colors.pink,
-                      ),
-                    ),
->>>>>>> 5864ea4 (feat:added file Capture the Flag 3)
                   ],
                 ),
               ),
@@ -380,7 +252,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
 
-              // ================= PROFILE 3 =================
 
               Container(
                 width: 220,
@@ -419,7 +290,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
                     const SizedBox(height: 12),
 
-                    // Profile Image
                     Center(
                       child: Image.asset(
                         ProfileImage3,
@@ -447,7 +317,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
                     const SizedBox(height: 6),
 
-                    // Age
                     Text(
                       "Age: $age3",
                       style: const TextStyle(fontSize: 12),
@@ -464,7 +333,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
 
-              // ================= PROFILE 4 =================
 
               Container(
                 width: 220,
@@ -490,7 +358,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
                   children: [
 
-                    // Profile Title
                     Center(
                       child: Text(
                         appTitle,
@@ -548,8 +415,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
 
-              // ================= PROFILE 5 =================
-
               Container(
                 width: 220,
                 margin: const EdgeInsets.only(bottom: 20),
@@ -574,7 +439,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
                   children: [
 
-                    // Profile Title
                     Center(
                       child: Text(
                         appTitle,
@@ -587,7 +451,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
                     const SizedBox(height: 12),
 
-                    // Profile Image
                     Center(
                       child: Image.asset(
                         ProfileImage5,
