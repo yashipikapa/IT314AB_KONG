@@ -67,6 +67,7 @@ flutter:
     - assets/mice.jpg
     - assets/sexy.jpg
     - assets/cutie.jpg
+    - assets/pretty.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
