@@ -63,6 +63,11 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - assets/meow.png
+    - assets/ha.jpg
+    - assets/mice.jpg
+    - assets/sexy.jpg
+    - assets/cutie.jpg
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 
