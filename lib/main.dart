@@ -1,12 +1,15 @@
-
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'screens/add_student_screen.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await loadStudents();
+
   runApp(const MyApp());
 }
-
-// STUDENT DATA
 
 List<Map<String, dynamic>> students = [
   {
@@ -83,15 +86,45 @@ List<Map<String, dynamic>> students = [
   },
 ];
 
+
+Future<void> saveStudents() async {
+  final prefs = await SharedPreferences.getInstance();
+
+  await prefs.setString(
+    "students",
+    jsonEncode(students),
+  );
+}
+
+
+Future<void> loadStudents() async {
+  final prefs = await SharedPreferences.getInstance();
+
+  final savedData = prefs.getString("students");
+
+  if (savedData != null) {
+    students = List<Map<String, dynamic>>.from(
+      jsonDecode(savedData),
+    );
+  }
+}
+
+
+
 final List<Map<String, dynamic>> originalStudents = students
     .map((student) => Map<String, dynamic>.from(student))
     .toList();
 
+// SORT STUDENTS
+
 void sortStudents() {
-  students.sort((a, b) => a["name"].compareTo(b["name"]));
+  students.sort(
+    (a, b) => a["name"].toString().compareTo(
+          b["name"].toString(),
+        ),
+  );
 }
 
-// MAIN APP AND NAMED ROUTES
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -101,13 +134,17 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Student List",
-
       initialRoute: '/student-list',
 
       routes: {
-        '/student-list': (context) => const StudentListScreen(),
+        '/student-list': (context) =>
+            const StudentListScreen(),
 
-        '/add-student': (context) => const AddStudentScreen(),
+        // ADD STUDENT FORM
+        '/add-student': (context) => AddStudentScreen(
+              existingStudents: students,
+              onSave: saveStudents,
+            ),
       },
 
       onGenerateRoute: (settings) {
@@ -130,7 +167,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// STUDENT LIST SCREEN
 
 class StudentListScreen extends StatefulWidget {
   const StudentListScreen({super.key});
@@ -140,17 +176,28 @@ class StudentListScreen extends StatefulWidget {
       _StudentListScreenState();
 }
 
-class _StudentListScreenState extends State<StudentListScreen> {
+class _StudentListScreenState
+    extends State<StudentListScreen> {
   List<bool> buttonPressed = [];
   List<bool> favoriteStudents = [];
+
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
 
-    buttonPressed = List<bool>.filled(students.length, false);
-    favoriteStudents = List<bool>.filled(students.length, false);
+    sortStudents();
+
+    buttonPressed = List<bool>.filled(
+      students.length,
+      false,
+    );
+
+    favoriteStudents = List<bool>.filled(
+      students.length,
+      false,
+    );
 
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
@@ -161,17 +208,29 @@ class _StudentListScreenState extends State<StudentListScreen> {
     });
   }
 
-  void restoreStudents() {
+
+  Future<void> restoreStudents() async {
     setState(() {
       students = originalStudents
           .map((student) => Map<String, dynamic>.from(student))
           .toList();
 
-      buttonPressed = List<bool>.filled(students.length, false);
-      favoriteStudents = List<bool>.filled(students.length, false);
-
       sortStudents();
+
+      buttonPressed = List<bool>.filled(
+        students.length,
+        false,
+      );
+
+      favoriteStudents = List<bool>.filled(
+        students.length,
+        false,
+      );
     });
+
+    await saveStudents();
+
+    if (!mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -181,10 +240,26 @@ class _StudentListScreenState extends State<StudentListScreen> {
     );
   }
 
+
+
+  void refreshStudents() {
+    setState(() {
+      sortStudents();
+
+      buttonPressed = List<bool>.filled(
+        students.length,
+        false,
+      );
+
+      favoriteStudents = List<bool>.filled(
+        students.length,
+        false,
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    sortStudents();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Student List"),
@@ -195,8 +270,19 @@ class _StudentListScreenState extends State<StudentListScreen> {
           IconButton(
             icon: const Icon(Icons.person_add),
             tooltip: "Add Student",
-            onPressed: () {
-              Navigator.pushNamed(context, '/add-student');
+
+            // ADD STUDENT NAVIGATION
+            onPressed: () async {
+              final result = await Navigator.pushNamed(
+                context,
+                '/add-student',
+              );
+
+              if (!context.mounted) return;
+
+              if (result == true) {
+                refreshStudents();
+              }
             },
           ),
         ],
@@ -219,7 +305,6 @@ class _StudentListScreenState extends State<StudentListScreen> {
                 ],
               ),
             )
-
           : students.isEmpty
               ? Center(
                   child: Column(
@@ -251,9 +336,9 @@ class _StudentListScreenState extends State<StudentListScreen> {
                     ],
                   ),
                 )
-
               : ListView.builder(
                   itemCount: students.length,
+
                   itemBuilder: (context, index) {
                     final student = students[index];
 
@@ -265,30 +350,50 @@ class _StudentListScreenState extends State<StudentListScreen> {
                           arguments: student,
                         );
 
-                        if (mounted) {
-                          setState(() {});
-                        }
+                        if (!context.mounted) return;
+
+                        refreshStudents();
                       },
 
                       child: Card(
-                        key: ValueKey(student["studentID"]),
+                        key: ValueKey(
+                          student["studentID"] ??
+                              student["name"],
+                        ),
                         margin: const EdgeInsets.all(10),
                         elevation: 4,
+
                         child: Padding(
                           padding: const EdgeInsets.all(15),
+
                           child: Column(
                             children: [
-                              Image.asset(
-                                student["image"],
-                                height: 120,
-                                width: 120,
-                                fit: BoxFit.cover,
-                              ),
+                              // STUDENT PROFILE PICTURE
+                              student["image"] != null &&
+                                      student["image"]
+                                          .toString()
+                                          .isNotEmpty
+                                  ? Image.asset(
+                                      student["image"].toString(),
+                                      height: 120,
+                                      width: 120,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : const CircleAvatar(
+                                      radius: 60,
+                                      backgroundColor: Colors.grey,
+                                      child: Icon(
+                                        Icons.person,
+                                        size: 70,
+                                        color: Colors.white,
+                                      ),
+                                    ),
 
                               const SizedBox(height: 10),
 
                               Text(
-                                student["name"],
+                                student["name"]?.toString() ??
+                                    "No name",
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(
                                   fontSize: 22,
@@ -298,20 +403,40 @@ class _StudentListScreenState extends State<StudentListScreen> {
 
                               const SizedBox(height: 8),
 
-                              Text("Course: ${student["course"]}"),
-                              Text("Year Level: ${student["yearLevel"]}"),
-                              Text("Age: ${student["age"]}"),
-                              Text("Hobby: ${student["hobby"]}"),
-                              Text("Student ID: ${student["studentID"]}"),
-                              Text("Email: ${student["email"]}"),
                               Text(
-                                "Favorite Subject: ${student["favoriteSubject"]}",
+                                "Course: ${student["course"] ?? "N/A"}",
+                              ),
+
+                              Text(
+                                "Year Level: ${student["yearLevel"] ?? "N/A"}",
+                              ),
+
+                              Text(
+                                "Age: ${student["age"] ?? "N/A"}",
+                              ),
+
+                              Text(
+                                "Hobby: ${student["hobby"] ?? "N/A"}",
+                              ),
+
+                              Text(
+                                "Student ID: ${student["studentID"] ?? "Not assigned"}",
+                              ),
+
+                              Text(
+                                "Email: ${student["email"] ?? "N/A"}",
+                              ),
+
+                              Text(
+                                "Favorite Subject: ${student["favoriteSubject"] ?? "N/A"}",
                               ),
 
                               const SizedBox(height: 8),
 
                               Text(
-                                student["active"] ? "Active" : "Inactive",
+                                student["active"] == true
+                                    ? "Active"
+                                    : "Inactive",
                                 style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -360,25 +485,32 @@ class _StudentListScreenState extends State<StudentListScreen> {
 
                               const SizedBox(height: 10),
 
+                              // FAVORITE BUTTON
+
                               ElevatedButton(
                                 onPressed: () {
                                   setState(() {
                                     buttonPressed[index] = true;
+
                                     favoriteStudents[index] =
                                         !favoriteStudents[index];
                                   });
 
-                                  ScaffoldMessenger.of(context).showSnackBar(
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(
                                     SnackBar(
                                       content: Text(
                                         favoriteStudents[index]
                                             ? "${student["name"]} added to favorites!"
                                             : "${student["name"]} removed from favorites!",
                                       ),
-                                      duration: const Duration(seconds: 2),
+                                      duration: const Duration(
+                                        seconds: 2,
+                                      ),
                                     ),
                                   );
                                 },
+
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -387,7 +519,7 @@ class _StudentListScreenState extends State<StudentListScreen> {
                                           ? Icons.favorite
                                           : Icons.favorite_border,
                                     ),
-                                    const SizedBox(width: 5),
+                                    const SizedBox(height: 5),
                                     const Text("Favorite"),
                                   ],
                                 ),
@@ -395,23 +527,72 @@ class _StudentListScreenState extends State<StudentListScreen> {
 
                               const SizedBox(height: 10),
 
-                              ElevatedButton(
-                                onPressed: () {
-                                  final deletedStudent = student["name"];
 
-                                  setState(() {
-                                    students.removeAt(index);
-                                    buttonPressed.removeAt(index);
-                                    favoriteStudents.removeAt(index);
-                                  });
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    // CONFIRM DELETE
+                                    final confirm = await showDialog<bool>(
+                                      context: context,
+                                      builder: (dialogContext) {
+                                        return AlertDialog(
+                                          title: const Text("Delete Student"),
+                                          content: Text(
+                                            "Are you sure you want to delete ${student["name"]}?",
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(dialogContext, false);
+                                              },
+                                              child: const Text("Cancel"),
+                                            ),
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.pop(dialogContext, true);
+                                              },
+                                              child: const Text("Delete"),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
 
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text("$deletedStudent deleted!"),
-                                      duration: const Duration(seconds: 2),
-                                    ),
-                                  );
-                                },
+                                    if (!context.mounted) return;
+
+                
+                                    if (confirm != true) return;
+
+                                    final deletedStudent = student["name"] ?? "Student";
+
+                 
+                                    setState(() {
+                                      students.remove(student);
+
+                                      buttonPressed = List<bool>.filled(
+                                        students.length,
+                                        false,
+                                      );
+
+                                      favoriteStudents = List<bool>.filled(
+                                        students.length,
+                                        false,
+                                      );
+                                    });
+
+            
+                                    await saveStudents();
+
+                                    if (!context.mounted) return;
+
+  
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text("$deletedStudent deleted!"),
+                                        duration: const Duration(seconds: 2),
+                                      ),
+                                    );
+                                  },
+
                                 child: const Text("Delete"),
                               ),
                             ],
@@ -425,7 +606,6 @@ class _StudentListScreenState extends State<StudentListScreen> {
   }
 }
 
-// STUDENT DETAILS SCREEN AND EDIT MODAL
 
 class StudentDetailsScreen extends StatefulWidget {
   final Map<String, dynamic> student;
@@ -440,36 +620,62 @@ class StudentDetailsScreen extends StatefulWidget {
       _StudentDetailsScreenState();
 }
 
-class _StudentDetailsScreenState extends State<StudentDetailsScreen> {
+class _StudentDetailsScreenState
+    extends State<StudentDetailsScreen> {
+
+  // EDIT STUDENT
+
   Future<void> editStudent() async {
-    final nameController =
-        TextEditingController(text: widget.student["name"]);
+    final nameController = TextEditingController(
+      text: widget.student["name"]?.toString() ?? "",
+    );
 
-    final idController =
-        TextEditingController(text: widget.student["studentID"]);
+    final idController = TextEditingController(
+      text: widget.student["studentID"]?.toString() ?? "",
+    );
 
-    final courseController =
-        TextEditingController(text: widget.student["course"]);
+    final courseController = TextEditingController(
+      text: widget.student["course"]?.toString() ?? "",
+    );
 
-    final yearController =
-        TextEditingController(text: widget.student["yearLevel"].toString());
+    final yearController = TextEditingController(
+      text: widget.student["yearLevel"]?.toString() ?? "",
+    );
 
-    final ageController =
-        TextEditingController(text: widget.student["age"].toString());
+    final ageController = TextEditingController(
+      text: widget.student["age"]?.toString() ?? "",
+    );
 
-    final hobbyController =
-        TextEditingController(text: widget.student["hobby"]);
+    final hobbyController = TextEditingController(
+      text: widget.student["hobby"]?.toString() ?? "",
+    );
 
-    final emailController =
-        TextEditingController(text: widget.student["email"]);
+    final emailController = TextEditingController(
+      text: widget.student["email"]?.toString() ?? "",
+    );
 
-    final subjectController =
-        TextEditingController(text: widget.student["favoriteSubject"]);
+    final subjectController = TextEditingController(
+      text: widget.student["favoriteSubject"]?.toString() ?? "",
+    );
 
-    bool active = widget.student["active"];
+    bool active = widget.student["active"] ?? true;
+
+   
+
+    void disposeControllers() {
+      nameController.dispose();
+      idController.dispose();
+      courseController.dispose();
+      yearController.dispose();
+      ageController.dispose();
+      hobbyController.dispose();
+      emailController.dispose();
+      subjectController.dispose();
+    }
 
     final result = await showDialog<bool>(
       context: context,
+
       builder: (dialogContext) {
         return StatefulBuilder(
           builder: (context, dialogSetState) {
@@ -478,6 +684,7 @@ class _StudentDetailsScreenState extends State<StudentDetailsScreen> {
 
               content: SizedBox(
                 width: double.maxFinite,
+
                 child: SingleChildScrollView(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -569,6 +776,7 @@ class _StudentDetailsScreenState extends State<StudentDetailsScreen> {
                         contentPadding: EdgeInsets.zero,
                         title: const Text("Active Student"),
                         value: active,
+
                         onChanged: (value) {
                           dialogSetState(() {
                             active = value;
@@ -590,8 +798,85 @@ class _StudentDetailsScreenState extends State<StudentDetailsScreen> {
 
                 ElevatedButton(
                   onPressed: () {
+                    if (nameController.text.trim().isEmpty ||
+                        courseController.text.trim().isEmpty ||
+                        emailController.text.trim().isEmpty) {
+                      ScaffoldMessenger.of(dialogContext)
+                          .showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            "Please fill in all required fields.",
+                          ),
+                        ),
+                      );
+
+                      return;
+                    }
+
+                    final year = int.tryParse(
+                      yearController.text.trim(),
+                    );
+
+                    if (year == null || year < 1 || year > 4) {
+                      ScaffoldMessenger.of(dialogContext)
+                          .showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            "Year Level must be between 1 and 4.",
+                          ),
+                        ),
+                      );
+
+                      return;
+                    }
+
+                    final age = int.tryParse(
+                      ageController.text.trim(),
+                    );
+
+                    if (age == null || age < 0) {
+                      ScaffoldMessenger.of(dialogContext)
+                          .showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            "Please enter a valid age.",
+                          ),
+                        ),
+                      );
+
+                      return;
+                    }
+
+                    final newStudentID =
+                        idController.text.trim();
+
+                    if (newStudentID.isNotEmpty) {
+                      final duplicate = students.any(
+                        (s) =>
+                            !identical(s, widget.student) &&
+                            s["studentID"]
+                                    ?.toString()
+                                    .trim() ==
+                                newStudentID,
+                      );
+
+                      if (duplicate) {
+                        ScaffoldMessenger.of(dialogContext)
+                            .showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              "Student ID already exists.",
+                            ),
+                          ),
+                        );
+
+                        return;
+                      }
+                    }
+
                     Navigator.pop(dialogContext, true);
                   },
+
                   child: const Text("Save"),
                 ),
               ],
@@ -601,27 +886,49 @@ class _StudentDetailsScreenState extends State<StudentDetailsScreen> {
       },
     );
 
-    if (!mounted) return;
+    if (!mounted) {
+      disposeControllers();
+      return;
+    }
 
     if (result == true) {
+
       setState(() {
-        widget.student["name"] = nameController.text;
-        widget.student["studentID"] = idController.text;
-        widget.student["course"] = courseController.text;
+        widget.student["name"] =
+            nameController.text.trim();
+
+        widget.student["studentID"] =
+            idController.text.trim().isEmpty
+                ? null
+                : idController.text.trim();
+
+        widget.student["course"] =
+            courseController.text.trim();
 
         widget.student["yearLevel"] =
-            int.tryParse(yearController.text) ??
-            widget.student["yearLevel"];
+            int.parse(yearController.text.trim());
 
         widget.student["age"] =
-            int.tryParse(ageController.text) ??
-            widget.student["age"];
+            int.parse(ageController.text.trim());
 
-        widget.student["hobby"] = hobbyController.text;
-        widget.student["email"] = emailController.text;
-        widget.student["favoriteSubject"] = subjectController.text;
+        widget.student["hobby"] =
+            hobbyController.text.trim();
+
+        widget.student["email"] =
+            emailController.text.trim();
+
+        widget.student["favoriteSubject"] =
+            subjectController.text.trim();
+
         widget.student["active"] = active;
       });
+
+      await saveStudents();
+
+      if (!mounted) {
+        disposeControllers();
+        return;
+      }
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -631,24 +938,22 @@ class _StudentDetailsScreenState extends State<StudentDetailsScreen> {
       );
     }
 
-    nameController.dispose();
-    idController.dispose();
-    courseController.dispose();
-    yearController.dispose();
-    ageController.dispose();
-    hobbyController.dispose();
-    emailController.dispose();
-    subjectController.dispose();
+    disposeControllers();
   }
+
+  // STUDENT DETAILS ROW
 
   Widget detailRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
+
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
+
         children: [
           Expanded(
             flex: 2,
+
             child: Text(
               "$label:",
               style: const TextStyle(
@@ -677,20 +982,36 @@ class _StudentDetailsScreenState extends State<StudentDetailsScreen> {
 
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
+
         child: Center(
           child: Column(
             children: [
-              Image.asset(
-                widget.student["image"],
-                height: 150,
-                width: 150,
-                fit: BoxFit.cover,
-              ),
+              // PROFILE PICTURE OR DEFAULT ICON
+              widget.student["image"] != null &&
+                      widget.student["image"]
+                          .toString()
+                          .isNotEmpty
+                  ? Image.asset(
+                      widget.student["image"].toString(),
+                      height: 150,
+                      width: 150,
+                      fit: BoxFit.cover,
+                    )
+                  : const CircleAvatar(
+                      radius: 75,
+                      backgroundColor: Colors.grey,
+                      child: Icon(
+                        Icons.person,
+                        size: 90,
+                        color: Colors.white,
+                      ),
+                    ),
 
               const SizedBox(height: 15),
 
               Text(
-                widget.student["name"],
+                widget.student["name"]?.toString() ??
+                    "No name",
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 24,
@@ -702,42 +1023,66 @@ class _StudentDetailsScreenState extends State<StudentDetailsScreen> {
 
               Card(
                 elevation: 4,
+
                 child: Padding(
                   padding: const EdgeInsets.all(15),
+
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+
                     children: [
                       detailRow(
                         "Student ID",
-                        widget.student["studentID"],
+                        widget.student["studentID"]
+                                ?.toString() ??
+                            "Not assigned",
                       ),
+
                       detailRow(
                         "Course",
-                        widget.student["course"],
+                        widget.student["course"]
+                                ?.toString() ??
+                            "N/A",
                       ),
+
                       detailRow(
                         "Year Level",
-                        widget.student["yearLevel"].toString(),
+                        widget.student["yearLevel"]
+                                ?.toString() ??
+                            "N/A",
                       ),
+
                       detailRow(
                         "Age",
-                        widget.student["age"].toString(),
+                        widget.student["age"]
+                                ?.toString() ??
+                            "N/A",
                       ),
+
                       detailRow(
                         "Hobby",
-                        widget.student["hobby"],
+                        widget.student["hobby"]
+                                ?.toString() ??
+                            "N/A",
                       ),
+
                       detailRow(
                         "Email",
-                        widget.student["email"],
+                        widget.student["email"]
+                                ?.toString() ??
+                            "N/A",
                       ),
+
                       detailRow(
                         "Favorite Subject",
-                        widget.student["favoriteSubject"],
+                        widget.student["favoriteSubject"]
+                                ?.toString() ??
+                            "N/A",
                       ),
+
                       detailRow(
                         "Status",
-                        widget.student["active"]
+                        widget.student["active"] == true
                             ? "Active"
                             : "Inactive",
                       ),
@@ -752,6 +1097,7 @@ class _StudentDetailsScreenState extends State<StudentDetailsScreen> {
                 onPressed: editStudent,
                 icon: const Icon(Icons.edit),
                 label: const Text("Edit Student"),
+
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.pink,
                   foregroundColor: Colors.white,

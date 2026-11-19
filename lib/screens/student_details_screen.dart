@@ -72,6 +72,23 @@ class _StudentDetailsScreenState
             ElevatedButton(
               onPressed: () {
                 setState(() {
+                    widget.student["image"] != null &&
+                            widget.student["image"].toString().isNotEmpty
+                        ? Image.asset(
+                            widget.student["image"].toString(),
+                            height: 150,
+                            width: 150,
+                            fit: BoxFit.cover,
+                          )
+                        : const CircleAvatar(
+                            radius: 75,
+                            backgroundColor: Colors.grey,
+                            child: Icon(
+                              Icons.person,
+                              size: 90,
+                              color: Colors.white,
+                            ),
+                          );
                   widget.student["name"] = nameController.text;
                   widget.student["email"] = emailController.text;
                   widget.student["age"] =
