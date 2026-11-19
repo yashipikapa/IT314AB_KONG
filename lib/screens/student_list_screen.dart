@@ -20,9 +20,16 @@ class _StudentListScreenState extends State<StudentListScreen> {
           IconButton(
             icon: const Icon(Icons.add),
             tooltip: "Add Student",
-            onPressed: () {
-              Navigator.pushNamed(context, '/add-student');
-            },
+              onPressed: () async {
+                final result = await Navigator.pushNamed(
+                  context,
+                  '/add-student',
+                );
+
+                if (result == true) {
+                  setState(() {});
+                }
+              },
           ),
         ],
       ),
