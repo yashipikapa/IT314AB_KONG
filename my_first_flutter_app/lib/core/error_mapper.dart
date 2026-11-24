@@ -2,18 +2,22 @@ import 'dart:async';
 import 'dart:io';
 import 'package:postgres/postgres.dart';
 
-
 class ErrorMapper {
   static String map(Object error) {
     if (error is ServerException) {
       final constraint = (error.constraintName ?? '').toLowerCase();
       switch (error.code) {
         case '23505': // unique_violation
-          if (constraint.contains('email')) return 'That email is already used by another student.';
-          if (constraint.contains('student_number')) return 'That student number already exists.';
-          if (constraint.contains('subject_code')) return 'That subject code already exists.';
-          if (constraint.contains('enrollment_id')) return 'This enrollment already has a grade. Edit it instead.';
-          if (constraint.contains('student_id') || constraint.contains('subject_id')) {
+          if (constraint.contains('email'))
+            return 'That email is already used by another student.';
+          if (constraint.contains('student_number'))
+            return 'That student number already exists.';
+          if (constraint.contains('subject_code'))
+            return 'That subject code already exists.';
+          if (constraint.contains('enrollment_id'))
+            return 'This enrollment already has a grade. Edit it instead.';
+          if (constraint.contains('student_id') ||
+              constraint.contains('subject_id')) {
             return 'The student is already enrolled in this subject.';
           }
           return 'A record with the same unique value already exists.';
